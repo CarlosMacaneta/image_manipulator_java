@@ -1,7 +1,6 @@
 package image.manipulator.controller;
 
 import image.manipulator.model.Image;
-import image.manipulator.util.Constants;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
