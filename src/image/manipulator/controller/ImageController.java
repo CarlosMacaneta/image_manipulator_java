@@ -2,7 +2,7 @@ package image.manipulator.controller;
 
 import image.manipulator.model.Image;
 
-import javax.imageio.ImageIO;
+import javax.imageio.ImageIO; 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
