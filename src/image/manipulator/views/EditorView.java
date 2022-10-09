@@ -5,11 +5,14 @@
 package image.manipulator.views;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.IOException;
 
 /**
  *
@@ -17,11 +20,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class EditorView extends javax.swing.JFrame {
 
+    //Public variables 
+    image.manipulator.model.Image img = new image.manipulator.model.Image();
+
     /**
      * Creates new form EditorView
      */
     public EditorView() {
         initComponents();
+
     }
 
     /**
@@ -119,16 +126,41 @@ public class EditorView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        try {
+           // JOptionPane.showMessageDialog(null, img.getImgPath());
+           var x = Integer.parseInt(JOptionPane.showInputDialog("Cordenada X"));
+           var y = Integer.parseInt(JOptionPane.showInputDialog("Cordenada Y"));
+           var width = Integer.parseInt(JOptionPane.showInputDialog("Largura da região a ser cortada"));
+           var height = Integer.parseInt(JOptionPane.showInputDialog("Altura da região a ser cortada"));
+            image.manipulator.model.Image img = new image.manipulator.model.Image();
+            img.setImgPath("C:\\Users\\Jaime Rungo\\Pictures\\R.jpg");
+            BufferedImage originalImg = ImageIO.read(
+                new File("C:\\Users\\Jaime Rungo\\Pictures\\funfo.jpg"));
+            
+            ImgEditor editor = new ImgEditor(img);           
+            BufferedImage newImage = editor.cropImg(x, y, width, height, originalImg);
+            img.saveImage(newImage, "C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
+            
+            ImageIcon ii = new ImageIcon("C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
+//            Resize image to fit jlabel
+            Image image = ii.getImage().getScaledInstance(jLabelImage.getWidth()-350, jLabelImage.getHeight()-50, Image.SCALE_SMOOTH);
+
+            jLabelImage.setIcon(new ImageIcon(image));
+            img.setImgPath("C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
+           
+        } catch (Exception e) {
+        } finally {
+        }
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void fileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileActionPerformed
-           // TODO add your handling code here:
+        // TODO add your handling code here:
         JFileChooser selectedImage = new JFileChooser();
         FileNameExtensionFilter fnef = new FileNameExtensionFilter("IMAGES", "png", "jpg", "jpeg");
         selectedImage.addChoosableFileFilter(fnef);
         int showOpenDialogue = selectedImage.showOpenDialog(null);
-         
+
         if (showOpenDialogue == JFileChooser.APPROVE_OPTION) {
             File selectedImageFile = selectedImage.getSelectedFile();
             String selectedImagePath = selectedImageFile.getAbsolutePath();
@@ -136,9 +168,10 @@ public class EditorView extends javax.swing.JFrame {
             //Display image on jlable
             ImageIcon ii = new ImageIcon(selectedImagePath);
 //            Resize image to fit jlabel
-            Image image = ii.getImage().getScaledInstance(jLabelImage.getWidth(), jLabelImage.getHeight(), Image.SCALE_SMOOTH);
-             
+            Image image = ii.getImage().getScaledInstance(jLabelImage.getWidth()-350, jLabelImage.getHeight()-50, Image.SCALE_SMOOTH);
+
             jLabelImage.setIcon(new ImageIcon(image));
+            img.setImgPath(selectedImagePath);
         }
     }//GEN-LAST:event_fileActionPerformed
 

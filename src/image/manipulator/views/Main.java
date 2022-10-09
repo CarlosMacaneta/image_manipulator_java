@@ -20,14 +20,14 @@ public class Main extends JPanel {
             Image img = new Image();
             img.setImgPath("C:\\Users\\Jaime Rungo\\Pictures\\R.jpg");
             BufferedImage originalImg = ImageIO.read(
-                new File("C:\\Users\\Jaime Rungo\\Pictures\\R.jpg"));
+                new File("C:\\Users\\Jaime Rungo\\Pictures\\12.jpg"));
             
             ImgEditor editor = new ImgEditor(img);
-            editor.rotateImg(25);
+            //editor.rotateImg(25);
             //editor.translateImg(300, 100);
             //editor.scaleImg(0.25, 0.25);
-            //BufferedImage newImage = editor.cropImg(300, 500, 200, 400, originalImg);
-            //img.saveImage(newImage, "C:\\Users\\Jaime Rungo\\Pictures\\f.jpg");
+            BufferedImage newImage = editor.cropImg(1000, 1000, 1000, 1000, originalImg);
+            img.saveImage(newImage, "C:\\Users\\Jaime Rungo\\Pictures\\1255.jpg");
             
            // img.saveImage(editor.cropImg(20, 50, 20, 50, originalImg), "C:\\Users\\Jaime Rungo\\Pictures\\f.jpg");
             frame.add(editor);
