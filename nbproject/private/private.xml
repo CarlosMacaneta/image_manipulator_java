@@ -3,7 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/dell/Documents/NetBeansProjects/Image%20Manipulator/src/image/manipulator/controller/ImageController.java</file>
+            <file>file:/D:/programming/image_manipulator_java/src/image/manipulator/model/Image.java</file>
+            <file>file:/D:/programming/image_manipulator_java/src/image/manipulator/views/EditorView.java</file>
+            <file>file:/D:/programming/image_manipulator_java/src/image/manipulator/views/Main.java</file>
+            <file>file:/D:/programming/image_manipulator_java/src/image/manipulator/controller/ImageController.java</file>
+            <file>file:/D:/programming/image_manipulator_java/src/image/manipulator/views/ImgEditor.java</file>
         </group>
     </open-files>
 </project-private>
