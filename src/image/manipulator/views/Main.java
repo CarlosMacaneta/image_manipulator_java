@@ -19,20 +19,16 @@ public class Main {
         JLabel label = new JLabel();
         ImageIcon icon = new ImageIcon();
 
-        try {
-            Image img = new Image();
-            img.setImgPath("C:\\Users\\dell\\Downloads\\uem.png");
-            ImageController ic = new ImageController(img);
+        Image img = new Image();
+        img.setImgPath("C:\\Users\\dell\\Downloads\\uem.png");
+        ImageController ic = new ImageController();
 
-            icon.setImage(ic.rotateImage(90));
-            label.setIcon(icon);
-            label.setBounds(300, 300, icon.getIconWidth(), icon.getIconHeight());
+        //icon.setImage(ic.rotateImage(90));
+        label.setIcon(icon);
+        label.setBounds(300, 300, icon.getIconWidth(), icon.getIconHeight());
 
-            panel.add(label);
-            panel.setBounds(0, 0, 600, 600);
-            frame.add(panel);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        panel.add(label);
+        panel.setBounds(0, 0, 600, 600);
+        frame.add(panel);
     }
 }
