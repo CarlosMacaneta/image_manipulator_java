@@ -1,8 +1,6 @@
 package image.manipulator.controller;
 
-import image.manipulator.model.Image;
-
-import javax.imageio.ImageIO; 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -14,13 +12,9 @@ import java.io.Serializable;
 
 public class ImageController implements Serializable {
 
-    private final BufferedImage bf;
+    //private ;
 
-    public ImageController(Image img) throws IOException {
-        bf = ImageIO.read(new File(img.getImgPath()));
-    }
-
-    public BufferedImage setImageDarker() {
+    public BufferedImage setImageDarker(BufferedImage bf) {
         for (int i = 0; i < bf.getWidth(); i++) {
             for (int j = 0; j < bf.getHeight(); j++) {
                 Color oldColor = new Color(bf.getRGB(i, j));
@@ -35,7 +29,7 @@ public class ImageController implements Serializable {
         return bf;
     }
 
-    public BufferedImage setImgToNegative() {
+    public BufferedImage setImgToNegative(BufferedImage bf) {
         for (int i = 0; i < bf.getWidth(); i++) {
             for (int j = 0; j < bf.getHeight(); j++) {
                 Color oldColor = new Color(bf.getRGB(i, j));
@@ -50,7 +44,7 @@ public class ImageController implements Serializable {
         return bf;
     }
 
-    public BufferedImage setImgToGrayScale() {
+    public BufferedImage setImgToGrayScale(BufferedImage bf) {
         for (int i = 0; i < bf.getWidth(); i++) {
             for (int j = 0; j < bf.getHeight(); j++) {
                 Color oldColor = new Color(bf.getRGB(i, j));
@@ -65,7 +59,7 @@ public class ImageController implements Serializable {
         return bf;
     }
 
-    public BufferedImage imageTranslation() {
+    public BufferedImage imageTranslation(BufferedImage bf) {
         BufferedImage mirror = new BufferedImage(bf.getWidth()*2, bf.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         for (int j = 0; j < bf.getHeight(); j++) {
@@ -76,43 +70,93 @@ public class ImageController implements Serializable {
                 mirror.setRGB(end, j, pixel);
             }
         }
-        return mirror;
+        
+        bf = mirror;
+        
+        return bf;
     }
 
-    public BufferedImage rotateImage(double angDeg) {
-        final double rads = Math.toRadians(angDeg);
-        final double sin = Math.abs(Math.sin(rads));
-        final double cos = Math.abs(Math.cos(rads));
+    /*public BufferedImage rotateImage(double angDeg) {
+        int widthOfImage = bf.getWidth();
+        int heightOfImage = bf.getHeight();
+        int typeOfImage = bf.getType();
 
-        final int w = (int) Math.floor(bf.getWidth() * cos + bf.getHeight() * sin);
-        final int h = (int) Math.floor(bf.getHeight() * cos + bf.getWidth() * sin);
+        BufferedImage newImageFromBuffer = new BufferedImage(widthOfImage, heightOfImage, typeOfImage);
 
-        final BufferedImage rotatedImage = new BufferedImage(w, h, bf.getType());
+        Graphics2D graphics2D = newImageFromBuffer.createGraphics();
 
-        final AffineTransform at = new AffineTransform();
-        at.translate((double) w / 2, (double) h / 2);
-        at.rotate(rads);
-        at.translate((double) -bf.getWidth() / 2, (double) -bf.getHeight() / 2);
+        graphics2D.rotate(Math.toRadians(angDeg), (double) widthOfImage / 2,  (double) heightOfImage / 2);
+        graphics2D.drawImage(bf, null, 0, 0);
 
-        final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-        rotateOp.filter(bf,rotatedImage);
+        bf = null;
+        bf = newImageFromBuffer;
+        return bf;
+        //return bf;
+    }*/
 
-        return rotatedImage;
+    public BufferedImage rotateImage(
+            BufferedImage bf,
+            double angDeg,
+            int tx,
+            int ty
+    ) {
+        int widthOfImage = bf.getWidth();
+        int heightOfImage = bf.getHeight();
+        int typeOfImage = bf.getType();
+
+        BufferedImage newImageFromBuffer = new BufferedImage(widthOfImage, heightOfImage, typeOfImage);
+
+        /*Graphics2D g2d = newImageFromBuffer.createGraphics();
+
+        g2d.translate(tx/2, ty/2);
+        g2d.rotate(Math.toRadians(angDeg*3.6));
+        g2d.drawImage(bf, -widthOfImage/2, -heightOfImage/2, null);
+        g2d.dispose();*/
+
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(Math.toRadians(angDeg), (double) bf.getWidth()/2, (double) bf.getHeight()/2);
+        double offset = (double)(bf.getWidth()-bf.getHeight())/2;
+        transform.translate(offset,offset);
+
+        AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
+        op.filter(bf, newImageFromBuffer);
+
+        return newImageFromBuffer;
     }
 
-    public BufferedImage scaleImage(double sx, double sy) {
+    public BufferedImage scaleImage(BufferedImage bf, double sx, double sy) {
         final int w = bf.getWidth();
         final int h = bf.getHeight();
 
-        BufferedImage scaledImage = new BufferedImage((w * 2),(h * 2), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage scaledImage = new BufferedImage((int)sx,(int)sy, bf.getType());
+        Graphics2D g2d = scaledImage.createGraphics();
+        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.drawImage(bf, 0, 0,w, h, null);
+        g2d.dispose();
 
-        final AffineTransform at = new AffineTransform();
-        at.scale(sx, sy);
+        bf = scaledImage;
+        
+        return bf;
+    }
 
-        final AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
-        scaledImage = ato.filter(bf, scaledImage);
+    /**
+     * Crop Image method
+     * @param bf
+     * @param x - the X coordinate of the upper-left corner of the specified rectangular region
+     * @param y - the Y coordinate of the upper-left corner of the specified rectangular region
+     * @param w - the width of the specified rectangular region
+     * @param h - the height of the specified rectangular region
+     * @param image - original image
+     * @return
+     */
+    public BufferedImage cropImg(BufferedImage bf, int x, int y, int w, int h, BufferedImage image) {
+        try {
+            bf = image.getSubimage(x, y, w, h);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        return scaledImage;
+        return bf;
     }
 
     public void saveImg(BufferedImage img, String filename) throws IOException {
