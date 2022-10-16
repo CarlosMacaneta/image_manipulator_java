@@ -1,7 +1,6 @@
 package image.manipulator.views;
 
 import image.manipulator.controller.ImageController;
-import image.manipulator.model.Image;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -19,8 +18,8 @@ public class Main {
         JLabel label = new JLabel();
         ImageIcon icon = new ImageIcon();
 
-        Image img = new Image();
-        img.setImgPath("C:\\Users\\dell\\Downloads\\uem.png");
+        /*Image img = new Image();
+        img.setImgPath("C:\\Users\\dell\\Downloads\\uem.png");*/
         ImageController ic = new ImageController();
 
         //icon.setImage(ic.rotateImage(90));

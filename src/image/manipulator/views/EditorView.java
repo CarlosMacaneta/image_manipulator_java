@@ -4,6 +4,8 @@
  */
 package image.manipulator.views;
 
+import image.manipulator.controller.ImageController;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,7 +23,7 @@ import java.io.IOException;
 public class EditorView extends javax.swing.JFrame {
 
     //Public variables 
-    image.manipulator.model.Image img = new image.manipulator.model.Image();
+    //image.manipulator.model.Image img = new image.manipulator.model.Image();
 
     /**
      * Creates new form EditorView
@@ -132,21 +134,21 @@ public class EditorView extends javax.swing.JFrame {
            var y = Integer.parseInt(JOptionPane.showInputDialog("Cordenada Y"));
            var width = Integer.parseInt(JOptionPane.showInputDialog("Largura da região a ser cortada"));
            var height = Integer.parseInt(JOptionPane.showInputDialog("Altura da região a ser cortada"));
-            image.manipulator.model.Image img = new image.manipulator.model.Image();
-            img.setImgPath("C:\\Users\\Jaime Rungo\\Pictures\\R.jpg");
+            /*image.manipulator.model.Image img = new image.manipulator.model.Image();
+            img.setImgPath("C:\\Users\\Jaime Rungo\\Pictures\\R.jpg");*/
             BufferedImage originalImg = ImageIO.read(
                 new File("C:\\Users\\Jaime Rungo\\Pictures\\funfo.jpg"));
             
-            ImgEditor editor = new ImgEditor(img);           
-            BufferedImage newImage = editor.cropImg(x, y, width, height, originalImg);
-            img.saveImage(newImage, "C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
+            ImageController editor = new ImageController();
+            BufferedImage newImage = editor.cropImg(originalImg, x, y, width, height, originalImg);
+            //img.saveImage(newImage, "C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
             
             ImageIcon ii = new ImageIcon("C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
 //            Resize image to fit jlabel
             Image image = ii.getImage().getScaledInstance(jLabelImage.getWidth()-350, jLabelImage.getHeight()-50, Image.SCALE_SMOOTH);
 
             jLabelImage.setIcon(new ImageIcon(image));
-            img.setImgPath("C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
+            //img.setImgPath("C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
            
         } catch (Exception e) {
         } finally {
@@ -168,10 +170,10 @@ public class EditorView extends javax.swing.JFrame {
             //Display image on jlable
             ImageIcon ii = new ImageIcon(selectedImagePath);
 //            Resize image to fit jlabel
-            Image image = ii.getImage().getScaledInstance(jLabelImage.getWidth()-350, jLabelImage.getHeight()-50, Image.SCALE_SMOOTH);
+            Image image = ii.getImage().getScaledInstance(jLabelImage.getWidth(), jLabelImage.getHeight(), Image.SCALE_SMOOTH);
 
             jLabelImage.setIcon(new ImageIcon(image));
-            img.setImgPath(selectedImagePath);
+            //img.setImgPath(selectedImagePath);
         }
     }//GEN-LAST:event_fileActionPerformed
 
