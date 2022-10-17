@@ -140,7 +140,7 @@ public class EditorView extends javax.swing.JFrame {
                 new File("C:\\Users\\Jaime Rungo\\Pictures\\funfo.jpg"));
             
             ImageController editor = new ImageController();
-            BufferedImage newImage = editor.cropImg(originalImg, x, y, width, height, originalImg);
+            //BufferedImage newImage = editor.cropImg(originalImg, x, y, width, height, originalImg);
             //img.saveImage(newImage, "C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");
             
             ImageIcon ii = new ImageIcon("C:\\Users\\Jaime Rungo\\Pictures\\novacena3.jpg");

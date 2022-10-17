@@ -75,11 +75,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="imgContainer">
                   <Properties>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                    </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="horizontalTextPosition" type="int" value="0"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -93,7 +89,7 @@
         </Container>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+    <Container class="javax.swing.JScrollPane" name="controlsScrollPane">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
           <BorderConstraints direction="East"/>
@@ -109,23 +105,24 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="rotationContainer" min="-2" pref="220" max="-2" attributes="0"/>
-                          <Component id="scaleContainer" min="-2" pref="210" max="-2" attributes="0"/>
-                          <Component id="translationContainer" min="-2" pref="210" max="-2" attributes="0"/>
-                          <Component id="clippingContainer" min="-2" pref="210" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="scaleContainer" pref="0" max="32767" attributes="0"/>
+                          <Component id="translationContainer" pref="0" max="32767" attributes="0"/>
+                          <Component id="clippingContainer" max="32767" attributes="0"/>
                           <Component id="effectContainer" min="-2" pref="210" max="-2" attributes="0"/>
-                          <Component id="saveChanges" min="-2" pref="210" max="-2" attributes="0"/>
+                          <Component id="saveChanges" max="32767" attributes="0"/>
+                          <Component id="rotationContainer" alignment="0" max="32767" attributes="0"/>
                       </Group>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                      <Component id="rotationContainer" min="-2" pref="90" max="-2" attributes="0"/>
-                      <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                      <Component id="rotationContainer" min="-2" pref="116" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="scaleContainer" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="28" pref="28" max="-2" attributes="0"/>
                       <Component id="translationContainer" min="-2" max="-2" attributes="0"/>
@@ -133,7 +130,7 @@
                       <Component id="clippingContainer" min="-2" pref="120" max="-2" attributes="0"/>
                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                       <Component id="effectContainer" min="-2" pref="110" max="-2" attributes="0"/>
-                      <EmptySpace min="30" pref="30" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="saveChanges" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -150,7 +147,9 @@
                 </Property>
               </Properties>
 
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
+                <Property name="verticalGap" type="int" value="5"/>
+              </Layout>
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
@@ -168,23 +167,61 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JSlider" name="rotationDegree">
-                  <Properties>
-                    <Property name="majorTickSpacing" type="int" value="90"/>
-                    <Property name="maximum" type="int" value="360"/>
-                    <Property name="minorTickSpacing" type="int" value="45"/>
-                    <Property name="paintLabels" type="boolean" value="true"/>
-                    <Property name="paintTicks" type="boolean" value="true"/>
-                    <Property name="value" type="int" value="0"/>
-                    <Property name="doubleBuffered" type="boolean" value="true"/>
-                    <Property name="valueIsAdjusting" type="boolean" value="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="rotationDegreeStateChanged"/>
-                  </Events>
+                <Container class="javax.swing.JPanel" name="jPanel2">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+                    <Property name="columns" type="int" value="2"/>
+                    <Property name="horizontalGap" type="int" value="10"/>
+                    <Property name="rows" type="int" value="2"/>
+                    <Property name="verticalGap" type="int" value="5"/>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JButton" name="ninetyDegLeft">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="90&#xba; Left"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ninetyDegLeftActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="ninetyDegRight">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="90&#xba; Right"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ninetyDegRightActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="oneEightDeg">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="180&#xba;"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[75, 30]"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="oneEightDegActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="angDeg">
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Component class="javax.swing.JButton" name="applyDeg">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Apply"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="applyDegActionPerformed"/>
+                  </Events>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="Last"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -385,7 +422,9 @@
                     </Constraint>
                   </Constraints>
 
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                    <Property name="horizontalGap" type="int" value="10"/>
+                  </Layout>
                   <SubComponents>
                     <Component class="javax.swing.JTextField" name="translateX">
                       <Properties>
@@ -450,7 +489,7 @@
                     <Property name="columns" type="int" value="0"/>
                     <Property name="horizontalGap" type="int" value="10"/>
                     <Property name="rows" type="int" value="2"/>
-                    <Property name="verticalGap" type="int" value="10"/>
+                    <Property name="verticalGap" type="int" value="5"/>
                   </Layout>
                   <SubComponents>
                     <Component class="javax.swing.JTextField" name="clipWidth">
@@ -493,6 +532,9 @@
                       <Dimension value="[72, 30]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+                  </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="South"/>

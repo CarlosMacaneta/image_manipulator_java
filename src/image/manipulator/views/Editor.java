@@ -5,13 +5,16 @@
 package image.manipulator.views;
 
 import image.manipulator.controller.ImageController;
-import java.awt.Image;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -20,19 +23,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author dell
  */
 public class Editor extends javax.swing.JFrame {
-    
+
     private BufferedImage originalImg;
     private ImageController editor;
-    
+
+    private File selectedImageFile;
     private String selectedImagePath = "";
-    
+
     private double sx;
     private double sy;
-    
-    private double tx;
-    private double ty;
-    
-    private double rotDeg;
 
     /**
      * Creates new form Editor
@@ -54,11 +53,16 @@ public class Editor extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         imgContainer = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        controlsScrollPane = new javax.swing.JScrollPane();
         controlsContainer = new javax.swing.JPanel();
         rotationContainer = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        rotationDegree = new javax.swing.JSlider();
+        jPanel2 = new javax.swing.JPanel();
+        ninetyDegLeft = new javax.swing.JButton();
+        ninetyDegRight = new javax.swing.JButton();
+        oneEightDeg = new javax.swing.JButton();
+        angDeg = new javax.swing.JTextField();
+        applyDeg = new javax.swing.JButton();
         scaleContainer = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
@@ -99,9 +103,7 @@ public class Editor extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        imgContainer.setBackground(new java.awt.Color(255, 255, 255));
         imgContainer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        imgContainer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jPanel1.add(imgContainer, java.awt.BorderLayout.CENTER);
 
         jScrollPane1.setViewportView(jPanel1);
@@ -112,7 +114,7 @@ public class Editor extends javax.swing.JFrame {
 
         rotationContainer.setMinimumSize(new java.awt.Dimension(190, 120));
         rotationContainer.setPreferredSize(new java.awt.Dimension(190, 120));
-        rotationContainer.setLayout(new java.awt.BorderLayout());
+        rotationContainer.setLayout(new java.awt.BorderLayout(0, 5));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -121,20 +123,43 @@ public class Editor extends javax.swing.JFrame {
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         rotationContainer.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
-        rotationDegree.setMajorTickSpacing(90);
-        rotationDegree.setMaximum(360);
-        rotationDegree.setMinorTickSpacing(45);
-        rotationDegree.setPaintLabels(true);
-        rotationDegree.setPaintTicks(true);
-        rotationDegree.setValue(0);
-        rotationDegree.setDoubleBuffered(true);
-        rotationDegree.setValueIsAdjusting(true);
-        rotationDegree.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                rotationDegreeStateChanged(evt);
+        jPanel2.setLayout(new java.awt.GridLayout(2, 2, 10, 5));
+
+        ninetyDegLeft.setText("90º Left");
+        ninetyDegLeft.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ninetyDegLeftActionPerformed(evt);
             }
         });
-        rotationContainer.add(rotationDegree, java.awt.BorderLayout.CENTER);
+        jPanel2.add(ninetyDegLeft);
+
+        ninetyDegRight.setText("90º Right");
+        ninetyDegRight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ninetyDegRightActionPerformed(evt);
+            }
+        });
+        jPanel2.add(ninetyDegRight);
+
+        oneEightDeg.setText("180º");
+        oneEightDeg.setPreferredSize(new java.awt.Dimension(75, 30));
+        oneEightDeg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                oneEightDegActionPerformed(evt);
+            }
+        });
+        jPanel2.add(oneEightDeg);
+        jPanel2.add(angDeg);
+
+        rotationContainer.add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        applyDeg.setText("Apply");
+        applyDeg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyDegActionPerformed(evt);
+            }
+        });
+        rotationContainer.add(applyDeg, java.awt.BorderLayout.PAGE_END);
 
         scaleContainer.setLayout(new java.awt.BorderLayout());
 
@@ -237,6 +262,8 @@ public class Editor extends javax.swing.JFrame {
         });
         translationContainer.add(applyTranslate, java.awt.BorderLayout.PAGE_END);
 
+        jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
+
         translateX.setMinimumSize(new java.awt.Dimension(90, 30));
         translateX.setPreferredSize(new java.awt.Dimension(95, 30));
         translateX.addActionListener(new java.awt.event.ActionListener() {
@@ -265,7 +292,7 @@ public class Editor extends javax.swing.JFrame {
         jLabel3.setAlignmentY(1.0F);
         clippingContainer.add(jLabel3, java.awt.BorderLayout.NORTH);
 
-        clipFieldsContainer.setLayout(new java.awt.GridLayout(2, 0, 10, 10));
+        clipFieldsContainer.setLayout(new java.awt.GridLayout(2, 0, 10, 5));
 
         clipWidth.setPreferredSize(new java.awt.Dimension(70, 30));
         clipWidth.addActionListener(new java.awt.event.ActionListener() {
@@ -288,6 +315,11 @@ public class Editor extends javax.swing.JFrame {
 
         jButton1.setText("Crop");
         jButton1.setPreferredSize(new java.awt.Dimension(72, 30));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         clippingContainer.add(jButton1, java.awt.BorderLayout.SOUTH);
 
         saveChanges.setText("Save changes");
@@ -304,20 +336,21 @@ public class Editor extends javax.swing.JFrame {
             controlsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlsContainerLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(controlsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(rotationContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(scaleContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(translationContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clippingContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(controlsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(scaleContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(translationContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(clippingContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(effectContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(saveChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(saveChanges, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rotationContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(10, 10, 10))
         );
         controlsContainerLayout.setVerticalGroup(
             controlsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlsContainerLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(rotationContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
+                .addComponent(rotationContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(scaleContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addComponent(translationContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -325,13 +358,13 @@ public class Editor extends javax.swing.JFrame {
                 .addComponent(clippingContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
                 .addComponent(effectContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(saveChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jScrollPane2.setViewportView(controlsContainer);
+        controlsScrollPane.setViewportView(controlsContainer);
 
-        getContentPane().add(jScrollPane2, java.awt.BorderLayout.EAST);
+        getContentPane().add(controlsScrollPane, java.awt.BorderLayout.EAST);
 
         menuOptions.setText("File");
 
@@ -355,34 +388,30 @@ public class Editor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void scaleYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scaleYActionPerformed
-        
+
     }//GEN-LAST:event_scaleYActionPerformed
 
     private void negativeColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorActionPerformed
         originalImg = editor.setImgToNegative(originalImg);
-        imgContainer.setIcon(new ImageIcon(originalImg));
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
     }//GEN-LAST:event_negativeColorActionPerformed
 
     private void translateYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_translateYActionPerformed
-        ty = Double.parseDouble(translateY.getText());
+
     }//GEN-LAST:event_translateYActionPerformed
 
     private void greyScaleEffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_greyScaleEffActionPerformed
-       originalImg = editor.setImgToGrayScale(originalImg);
-       imgContainer.setIcon(new ImageIcon(originalImg));
+        originalImg = editor.setImgToGrayScale(originalImg);
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
     }//GEN-LAST:event_greyScaleEffActionPerformed
 
     private void mirrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mirrorActionPerformed
-       originalImg = editor.imageTranslation(originalImg);
-       imgContainer.setIcon(new ImageIcon(originalImg));
+        originalImg = editor.imageMirror(originalImg);
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
     }//GEN-LAST:event_mirrorActionPerformed
-
-    private void rotationDegreeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rotationDegreeStateChanged
-        rotDeg = Double.parseDouble(rotationDegree.getValue()+"");
-        System.out.println(rotDeg);
-        originalImg = editor.rotateImage(originalImg, rotDeg, imgContainer.getSize().width, imgContainer.getSize().height);
-        imgContainer.setIcon(new ImageIcon(originalImg));
-    }//GEN-LAST:event_rotationDegreeStateChanged
 
     private void scaleXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scaleXActionPerformed
 
@@ -391,22 +420,28 @@ public class Editor extends javax.swing.JFrame {
     private void applyScaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyScaleActionPerformed
         sx = Double.parseDouble(scaleX.getText());
         sy = Double.parseDouble(scaleY.getText());
-        
+
         originalImg = editor.scaleImage(originalImg, sx, sy);
-        imgContainer.setIcon(new ImageIcon(originalImg));
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
     }//GEN-LAST:event_applyScaleActionPerformed
 
     private void darkEffeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkEffeActionPerformed
         originalImg = editor.setImageDarker(originalImg);
-       imgContainer.setIcon(new ImageIcon(originalImg));
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
     }//GEN-LAST:event_darkEffeActionPerformed
 
     private void translateXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_translateXActionPerformed
-        tx = Double.parseDouble(translateX.getText());
+
     }//GEN-LAST:event_translateXActionPerformed
 
     private void applyTranslateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyTranslateActionPerformed
-        // TODO add your handling code here:
+        originalImg = editor.translate(originalImg,
+                Double.parseDouble(translateX.getText()),
+                        Double.parseDouble(translateY.getText()));
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
     }//GEN-LAST:event_applyTranslateActionPerformed
 
     private void clipWidthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clipWidthActionPerformed
@@ -420,9 +455,9 @@ public class Editor extends javax.swing.JFrame {
         int showOpenDialogue = selectedImage.showOpenDialog(null);
 
         if (showOpenDialogue == JFileChooser.APPROVE_OPTION) {
-            File selectedImageFile = selectedImage.getSelectedFile();
+            selectedImageFile = selectedImage.getSelectedFile();
             selectedImagePath = selectedImageFile.getAbsolutePath();
-            
+
             try {
                 originalImg = ImageIO.read(new File(selectedImagePath));
                 editor = new ImageController();
@@ -436,12 +471,61 @@ public class Editor extends javax.swing.JFrame {
     }//GEN-LAST:event_openFileActionPerformed
 
     private void saveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveChangesActionPerformed
-        try {
-            editor.saveImg(originalImg, selectedImagePath);
-        } catch (IOException ex) {
-            Logger.getLogger(Editor.class.getName()).log(Level.SEVERE, null, ex);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to save");
+        int result = fileChooser.showSaveDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                ImageInputStream imageInputStream = ImageIO.createImageInputStream(selectedImageFile);
+                Iterator<ImageReader> iterator = ImageIO.getImageReaders(imageInputStream);
+                ImageReader imageReader = iterator.next();
+
+                File selectedFile = fileChooser.getSelectedFile();
+                selectedFile = new File(selectedFile.getCanonicalPath() + "." + imageReader.getFormatName());
+
+                ImageIO.write(originalImg, imageReader.getFormatName(), selectedFile);
+            } catch (IOException ex) {
+                Logger.getLogger(Editor.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_saveChangesActionPerformed
+
+    private void ninetyDegLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ninetyDegLeftActionPerformed
+        originalImg = editor.rotateImage(originalImg, -90);
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
+    }//GEN-LAST:event_ninetyDegLeftActionPerformed
+
+    private void ninetyDegRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ninetyDegRightActionPerformed
+        originalImg = editor.rotateImage(originalImg, 90);
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
+    }//GEN-LAST:event_ninetyDegRightActionPerformed
+
+    private void oneEightDegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneEightDegActionPerformed
+        originalImg = editor.rotateImage(originalImg, 180);
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
+    }//GEN-LAST:event_oneEightDegActionPerformed
+
+    private void applyDegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyDegActionPerformed
+        originalImg = editor.rotateImage(originalImg, Double
+                .parseDouble(angDeg.getText()));
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
+    }//GEN-LAST:event_applyDegActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        originalImg = editor.cropImg(originalImg, 
+            Integer.parseInt(clipX.getText()),
+            Integer.parseInt(clipY.getText()),
+            Integer.parseInt(clipWidth.getText()),
+            Integer.parseInt(clipHeight.getText())
+        );
+        ImageIcon ii = new ImageIcon(originalImg);
+        imgContainer.setIcon(ii);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -450,7 +534,7 @@ public class Editor extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -472,6 +556,8 @@ public class Editor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField angDeg;
+    private javax.swing.JButton applyDeg;
     private javax.swing.JButton applyScale;
     private javax.swing.JButton applyTranslate;
     private javax.swing.JPanel clipFieldsContainer;
@@ -481,6 +567,7 @@ public class Editor extends javax.swing.JFrame {
     private javax.swing.JTextField clipY;
     private javax.swing.JPanel clippingContainer;
     private javax.swing.JPanel controlsContainer;
+    private javax.swing.JScrollPane controlsScrollPane;
     private javax.swing.JButton darkEffe;
     private javax.swing.JPanel editorContainer;
     private javax.swing.JPanel effectContainer;
@@ -494,18 +581,20 @@ public class Editor extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenu menuOptions;
     private javax.swing.JButton mirror;
     private javax.swing.JButton negativeColor;
     private javax.swing.JMenuItem newFile;
+    private javax.swing.JButton ninetyDegLeft;
+    private javax.swing.JButton ninetyDegRight;
+    private javax.swing.JButton oneEightDeg;
     private javax.swing.JMenuItem openFile;
     private javax.swing.JPanel rotationContainer;
-    private javax.swing.JSlider rotationDegree;
     private javax.swing.JButton saveChanges;
     private javax.swing.JPanel scaleContainer;
     private javax.swing.JTextField scaleX;
