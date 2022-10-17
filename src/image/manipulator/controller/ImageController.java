@@ -9,8 +9,6 @@ import java.io.Serializable;
 
 public class ImageController implements Serializable {
 
-    //private ;
-
     public BufferedImage setImageDarker(BufferedImage bf) {
         for (int i = 0; i < bf.getWidth(); i++) {
             for (int j = 0; j < bf.getHeight(); j++) {
